@@ -82,11 +82,5 @@ variable "ingress_rules" {
     port     = number
     cidr     = string
   }))
-  default = [
-    {
-      protocol = "tcp"
-      port     = 22
-      cidr     = "0.0.0.0/0"
-    }
-  ]
+  default = []
 }

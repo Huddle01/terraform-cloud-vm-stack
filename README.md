@@ -17,6 +17,12 @@ Use explicit volume lifecycle resources in root configuration:
 1. `huddle_cloud_volume` to create/manage data disks
 2. `huddle_cloud_volume_attachment` to attach/detach disks from instances
 
+## Security Considerations
+
+- **No ingress rules are created by default.** You must explicitly define `ingress_rules` — the module will not open any ports unless you ask it to.
+- **Restrict CIDR blocks** to known IP ranges rather than `0.0.0.0/0`. Only expose ports to the internet if your workload requires it.
+- **Set `assign_public_ip = false`** for internal workloads that do not need a public IP address.
+
 ## Usage
 
 ```hcl

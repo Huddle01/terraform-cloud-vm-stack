@@ -11,11 +11,13 @@ output "instance_status" {
 }
 
 output "private_ipv4" {
-  value = huddle_cloud_instance.this.private_ipv4
+  value     = huddle_cloud_instance.this.private_ipv4
+  sensitive = true
 }
 
 output "public_ipv4" {
-  value = huddle_cloud_instance.this.public_ipv4
+  value     = huddle_cloud_instance.this.public_ipv4
+  sensitive = true
 }
 
 output "network_id" {
