@@ -19,11 +19,6 @@ variable "boot_disk_size" {
   default = 30
 }
 
-variable "additional_volume_size" {
-  type    = number
-  default = null
-}
-
 variable "assign_public_ip" {
   type    = bool
   default = true

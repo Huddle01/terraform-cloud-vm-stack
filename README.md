@@ -8,6 +8,15 @@ Creates:
 - Keypair
 - Instance
 
+## Storage note
+
+The module no longer exposes `additional_volume_size`.
+
+Use explicit volume lifecycle resources in root configuration:
+
+1. `huddle_cloud_volume` to create/manage data disks
+2. `huddle_cloud_volume_attachment` to attach/detach disks from instances
+
 ## Usage
 
 ```hcl

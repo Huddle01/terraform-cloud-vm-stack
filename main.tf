@@ -45,15 +45,14 @@ locals {
 }
 
 resource "huddle_cloud_instance" "this" {
-  name                   = "${var.name_prefix}-vm"
-  region                 = var.region
-  flavor_id              = var.flavor_id
-  image_id               = var.image_id
-  boot_disk_size         = var.boot_disk_size
-  additional_volume_size = var.additional_volume_size
-  key_names              = [huddle_cloud_keypair.this.name]
-  security_group_names   = [huddle_cloud_security_group.this.name]
-  assign_public_ip       = var.assign_public_ip
-  network_id             = local.network_id
-  power_state            = var.power_state
+  name                 = "${var.name_prefix}-vm"
+  region               = var.region
+  flavor_id            = var.flavor_id
+  image_id             = var.image_id
+  boot_disk_size       = var.boot_disk_size
+  key_names            = [huddle_cloud_keypair.this.name]
+  security_group_names = [huddle_cloud_security_group.this.name]
+  assign_public_ip     = var.assign_public_ip
+  network_id           = local.network_id
+  power_state          = var.power_state
 }
