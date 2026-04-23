@@ -39,6 +39,35 @@ jobs:
       - name: Validate
         run: terraform validate
 
+  # ── Example validation ───────────────────────────────────────────────────────
+  # Validates every example directory: init + validate catches syntax errors and
+  # stale variable/attribute names before they reach main.
+  validate-examples:
+    name: Validate examples
+    runs-on: ubuntu-latest
+    needs: [fmt, validate]
+    strategy:
+      matrix:
+        example:
+          - basic
+          - existing-network
+          - private-vm
+          - with-data-volume
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.7"
+
+      - name: Init example (${{ matrix.example }})
+        working-directory: examples/${{ matrix.example }}
+        run: terraform init -backend=false
+
+      - name: Validate example (${{ matrix.example }})
+        working-directory: examples/${{ matrix.example }}
+        run: terraform validate
+
   # ── Unit tests ──────────────────────────────────────────────────────────────
   # Runs on every PR. Uses mock_provider — no credentials required.
   unit-tests:
@@ -64,7 +93,7 @@ jobs:
   acceptance-tests:
     name: Acceptance tests
     runs-on: ubuntu-latest
-    needs: [unit-tests]
+    needs: [unit-tests, validate-examples]
     if: >
       github.event_name == 'push' ||
       (github.event_name == 'pull_request' &&

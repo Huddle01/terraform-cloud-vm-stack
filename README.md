@@ -24,6 +24,17 @@ Use explicit volume lifecycle resources in root configuration:
 - **Set `assign_public_ip = false`** for internal workloads that do not need a public IP address.
 - **Egress is allow-all by default** (provider default). Use `egress_rules` to restrict outbound traffic if needed.
 
+## Examples
+
+Runnable examples live in the [`examples/`](./examples) directory:
+
+| Example | Description |
+|---------|-------------|
+| [`basic`](./examples/basic) | Full stack with new network, public IP, SSH/HTTP/HTTPS ingress |
+| [`existing-network`](./examples/existing-network) | Attach to a pre-existing network (`create_network = false`) |
+| [`private-vm`](./examples/private-vm) | No public IP, no ingress, restricted egress — internal workloads |
+| [`with-data-volume`](./examples/with-data-volume) | VM + standalone data volume + attachment |
+
 ## Usage
 
 ### Basic (create everything)
@@ -89,7 +100,38 @@ module "vm_stack" {
 
   egress_rules = [
     { protocol = "tcp", port = 443, cidr = "0.0.0.0/0" },
+    { protocol = "udp", port = 53,  cidr = "0.0.0.0/0" },
   ]
+}
+```
+
+### With data volume
+
+```hcl
+module "vm_stack" {
+  source = "huddle01/vm-stack/cloud"
+
+  name_prefix    = "data-vm"
+  region         = "eu2"
+  flavor_name    = "anton-4"
+  image_name     = "ubuntu-22.04"
+  ssh_public_key = file("~/.ssh/id_ed25519.pub")
+
+  pool_cidr           = "10.0.0.0/8"
+  primary_subnet_cidr = "10.0.3.0/24"
+  primary_subnet_size = 24
+}
+
+resource "huddle_cloud_volume" "data" {
+  name   = "data-vm-data"
+  size   = 100
+  region = "eu2"
+}
+
+resource "huddle_cloud_volume_attachment" "data" {
+  volume_id   = huddle_cloud_volume.data.id
+  instance_id = module.vm_stack.instance_id
+  region      = "eu2"
 }
 ```
 
