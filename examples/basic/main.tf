@@ -8,11 +8,12 @@ module "vm_stack" {
 
   name_prefix    = "demo"
   region         = var.region
-  flavor_id      = var.flavor_id
-  image_id       = var.image_id
+  flavor_name    = var.flavor_name
+  image_name     = var.image_name
   ssh_public_key = var.ssh_public_key
 
   ingress_rules = [
+    # NOTE: SSH is open to all IPs for ease of testing. Restrict to your IP in production (e.g. "203.0.113.0/32").
     { protocol = "tcp", port = 22, cidr = "0.0.0.0/0" },
     { protocol = "tcp", port = 80, cidr = "0.0.0.0/0" },
     { protocol = "tcp", port = 443, cidr = "0.0.0.0/0" }

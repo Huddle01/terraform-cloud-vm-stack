@@ -5,3 +5,6 @@
 crash.log
 *.tfvars
 .DS_Store
+
+# Environment (credentials for acceptance tests — never commit)
+.env.acceptance
