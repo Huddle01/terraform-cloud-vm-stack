@@ -139,7 +139,7 @@ run "network_id_required_when_create_network_false_fails" {
     create_network = false
     network_id     = null
   }
-  expect_failures = [var.network_id]
+  expect_failures = [huddle_cloud_instance.this]
 }
 
 # ── ingress_rules ─────────────────────────────────────────────────────────────

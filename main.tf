@@ -3,7 +3,7 @@ terraform {
   required_providers {
     huddle = {
       source  = "huddle01/cloud"
-      version = "0.2.0"
+      version = "0.3.1"
     }
   }
 }
@@ -86,4 +86,11 @@ resource "huddle_cloud_instance" "this" {
   power_state          = var.power_state
 
   depends_on = [huddle_cloud_network.this]
+
+  lifecycle {
+    precondition {
+      condition     = var.create_network || var.network_id != null
+      error_message = "network_id must be set when create_network is false."
+    }
+  }
 }

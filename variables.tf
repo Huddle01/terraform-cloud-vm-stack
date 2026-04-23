@@ -63,10 +63,6 @@ variable "network_id" {
   type        = string
   default     = null
   description = "ID of an existing network to attach the instance to. Required when create_network is false."
-  validation {
-    condition     = var.create_network || var.network_id != null
-    error_message = "network_id must be set when create_network is false."
-  }
 }
 
 variable "pool_cidr" {
