@@ -213,6 +213,68 @@ run "egress_rule_attributes_match_input" {
 
 # ── Ingress and egress coexist ────────────────────────────────────────────────
 
+run "security_group_description_is_set" {
+  command = plan
+
+  assert {
+    condition     = huddle_cloud_security_group.this.description == "Managed by terraform vm-stack module"
+    error_message = "Security group description should be set to the expected string."
+  }
+}
+
+run "ingress_rule_region_matches_input" {
+  command = plan
+  variables {
+    region        = "us1"
+    ingress_rules = [{ protocol = "tcp", port = 22, cidr = "0.0.0.0/0" }]
+  }
+
+  assert {
+    condition     = values(huddle_cloud_security_group_rule.ingress)[0].region == "us1"
+    error_message = "Ingress rule region should match the region variable."
+  }
+}
+
+run "egress_rule_region_matches_input" {
+  command = plan
+  variables {
+    region       = "us1"
+    egress_rules = [{ protocol = "tcp", port = 443, cidr = "0.0.0.0/0" }]
+  }
+
+  assert {
+    condition     = values(huddle_cloud_security_group_rule.egress)[0].region == "us1"
+    error_message = "Egress rule region should match the region variable."
+  }
+}
+
+run "security_group_region_matches_non_default" {
+  command = plan
+  variables {
+    region = "ap1"
+  }
+
+  assert {
+    condition     = huddle_cloud_security_group.this.region == "ap1"
+    error_message = "Security group region should match a non-default region variable."
+  }
+}
+
+run "egress_rule_port_max_equals_min" {
+  command = plan
+  variables {
+    egress_rules = [{ protocol = "tcp", port = 8080, cidr = "0.0.0.0/0" }]
+  }
+
+  assert {
+    condition = (
+      values(huddle_cloud_security_group_rule.egress)[0].port_range_min ==
+      values(huddle_cloud_security_group_rule.egress)[0].port_range_max
+    )
+    error_message = "port_range_min and port_range_max must be equal for single-port egress rules."
+  }
+}
+
 run "ingress_and_egress_rules_coexist" {
   command = plan
   variables {

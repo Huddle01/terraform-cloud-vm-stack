@@ -226,3 +226,135 @@ run "boot_disk_size_30_by_default" {
     error_message = "boot_disk_size should default to 30."
   }
 }
+
+run "custom_boot_disk_size_is_passed_to_instance" {
+  command = plan
+  variables {
+    create_network = false
+    network_id     = "net-000"
+    boot_disk_size = 80
+  }
+
+  assert {
+    condition     = huddle_cloud_instance.this.boot_disk_size == 80
+    error_message = "Custom boot_disk_size should be forwarded to the instance resource."
+  }
+}
+
+run "assign_public_ip_false_is_passed_to_instance" {
+  command = plan
+  variables {
+    create_network   = false
+    network_id       = "net-000"
+    assign_public_ip = false
+  }
+
+  assert {
+    condition     = huddle_cloud_instance.this.assign_public_ip == false
+    error_message = "assign_public_ip = false should be forwarded to the instance resource."
+  }
+}
+
+run "flavor_name_is_passed_to_instance" {
+  command = plan
+  variables {
+    create_network = false
+    network_id     = "net-000"
+    flavor_name    = "anton-8"
+  }
+
+  assert {
+    condition     = huddle_cloud_instance.this.flavor_name == "anton-8"
+    error_message = "flavor_name should be forwarded to the instance resource."
+  }
+}
+
+run "image_name_is_passed_to_instance" {
+  command = plan
+  variables {
+    create_network = false
+    network_id     = "net-000"
+    image_name     = "debian-12"
+  }
+
+  assert {
+    condition     = huddle_cloud_instance.this.image_name == "debian-12"
+    error_message = "image_name should be forwarded to the instance resource."
+  }
+}
+
+run "region_is_passed_to_instance" {
+  command = plan
+  variables {
+    region         = "us1"
+    create_network = false
+    network_id     = "net-000"
+  }
+
+  assert {
+    condition     = huddle_cloud_instance.this.region == "us1"
+    error_message = "region should be forwarded to the instance resource."
+  }
+}
+
+# ── Network options ───────────────────────────────────────────────────────────
+
+run "no_gateway_true_is_forwarded" {
+  command = plan
+  variables {
+    create_network      = true
+    pool_cidr           = "10.0.0.0/8"
+    primary_subnet_cidr = "10.0.1.0/24"
+    primary_subnet_size = 24
+    no_gateway          = true
+  }
+
+  assert {
+    condition     = huddle_cloud_network.this[0].no_gateway == true
+    error_message = "no_gateway = true should be forwarded to the network resource."
+  }
+}
+
+run "enable_dhcp_false_is_forwarded" {
+  command = plan
+  variables {
+    create_network      = true
+    pool_cidr           = "10.0.0.0/8"
+    primary_subnet_cidr = "10.0.1.0/24"
+    primary_subnet_size = 24
+    enable_dhcp         = false
+  }
+
+  assert {
+    condition     = huddle_cloud_network.this[0].enable_dhcp == false
+    error_message = "enable_dhcp = false should be forwarded to the network resource."
+  }
+}
+
+run "network_region_forwarded_when_create_network_true" {
+  command = plan
+  variables {
+    region              = "us1"
+    create_network      = true
+    pool_cidr           = "10.0.0.0/8"
+    primary_subnet_cidr = "10.0.1.0/24"
+    primary_subnet_size = 24
+  }
+
+  assert {
+    condition     = huddle_cloud_network.this[0].region == "us1"
+    error_message = "region should be forwarded to the network resource."
+  }
+}
+
+# ── Precondition: network_id required when create_network = false ─────────────
+
+run "precondition_network_id_missing_fails" {
+  command = plan
+  variables {
+    create_network = false
+    network_id     = null
+  }
+
+  expect_failures = [huddle_cloud_instance.this]
+}

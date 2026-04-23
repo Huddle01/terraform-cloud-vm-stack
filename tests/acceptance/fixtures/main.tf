@@ -35,6 +35,27 @@ module "vm_stack" {
   egress_rules        = var.egress_rules
 }
 
+# ── Optional data volume ──────────────────────────────────────────────────────
+
+resource "huddle_cloud_volume" "data" {
+  count = var.create_volume ? 1 : 0
+
+  name              = "${var.name_prefix}-data"
+  size              = var.volume_size
+  region            = var.region
+  delete_on_destroy = true # always clean up in tests
+}
+
+resource "huddle_cloud_volume_attachment" "data" {
+  count = var.create_volume ? 1 : 0
+
+  volume_id   = huddle_cloud_volume.data[0].id
+  instance_id = module.vm_stack.instance_id
+  region      = var.region
+}
+
+# ── Outputs ───────────────────────────────────────────────────────────────────
+
 output "instance_id" { value = module.vm_stack.instance_id }
 output "instance_name" { value = module.vm_stack.instance_name }
 output "instance_status" { value = module.vm_stack.instance_status }
@@ -49,4 +70,9 @@ output "public_ipv4" {
 output "private_ipv4" {
   value     = module.vm_stack.private_ipv4
   sensitive = true
+}
+
+output "volume_id" {
+  value       = var.create_volume ? huddle_cloud_volume.data[0].id : ""
+  description = "ID of the attached data volume. Empty string when create_volume = false."
 }

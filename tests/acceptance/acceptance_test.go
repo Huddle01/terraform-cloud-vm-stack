@@ -271,6 +271,45 @@ func TestRestrictedEgress(t *testing.T) {
 		"security_group_id must be populated")
 }
 
+// TestWithDataVolume verifies that a standalone volume can be created and
+// attached to the instance, and that the volume_id output is populated.
+// This exercises the same pattern shown in examples/with-data-volume.
+func TestWithDataVolume(t *testing.T) {
+	t.Parallel()
+	apiKey, region, flavorName, imageName := requiredVars(t)
+	kp := generateSSHKeyPair(t)
+
+	opts := &terraform.Options{
+		TerraformDir: copyFixtures(t, fixtureDir),
+		Vars: applyBaseURL(map[string]interface{}{
+			"api_key":             apiKey,
+			"region":              region,
+			"flavor_name":         flavorName,
+			"image_name":          imageName,
+			"ssh_public_key":      kp.PublicKey,
+			"name_prefix":         uniquePrefix("acc-vol"),
+			"pool_cidr":           "10.60.0.0/16",
+			"primary_subnet_cidr": "10.60.1.0/24",
+			"primary_subnet_size": 24,
+			"ingress_rules": []map[string]interface{}{
+				{"protocol": "tcp", "port": 22, "cidr": "0.0.0.0/0"},
+			},
+			"create_volume": true,
+			"volume_size":   10,
+		}),
+		NoColor: true,
+	}
+
+	defer terraform.Destroy(t, opts)
+	applyFixture(t, opts)
+
+	instanceID := terraform.Output(t, opts, "instance_id")
+	volumeID   := terraform.Output(t, opts, "volume_id")
+
+	require.NotEmpty(t, instanceID, "instance_id must be populated")
+	require.NotEmpty(t, volumeID,   "volume_id must be populated after volume attachment")
+}
+
 // TestIdempotent verifies that applying the same configuration twice results
 // in zero planned changes (Terraform idempotency).
 func TestIdempotent(t *testing.T) {

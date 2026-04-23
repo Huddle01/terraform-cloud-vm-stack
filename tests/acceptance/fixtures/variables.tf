@@ -91,3 +91,15 @@ variable "egress_rules" {
   }))
   default = []
 }
+
+variable "create_volume" {
+  type        = bool
+  default     = false
+  description = "When true, creates a standalone data volume and attaches it to the instance."
+}
+
+variable "volume_size" {
+  type        = number
+  default     = 10
+  description = "Size of the data volume in GB. Only used when create_volume = true."
+}
