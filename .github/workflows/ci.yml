@@ -52,6 +52,9 @@ jobs:
         with:
           terraform_version: "~> 1.7"
 
+      - name: Init
+        run: terraform init -backend=false
+
       - name: Run unit tests
         run: terraform test -test-directory=tests
 
