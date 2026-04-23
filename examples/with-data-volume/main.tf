@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    huddle = {
+      source  = "huddle01/cloud"
+      version = "~> 0.3"
+    }
+  }
+}
+
 provider "huddle" {
   api_key = var.huddle_api_key
   region  = var.region
