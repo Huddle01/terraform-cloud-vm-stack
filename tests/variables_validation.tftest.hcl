@@ -148,10 +148,10 @@ run "ingress_valid_rules_pass" {
   command = plan
   variables {
     ingress_rules = [
-      { protocol = "tcp",  port = 22,  cidr = "10.0.0.0/8" },
-      { protocol = "tcp",  port = 443, cidr = "0.0.0.0/0" },
-      { protocol = "udp",  port = 53,  cidr = "192.168.1.0/24" },
-      { protocol = "icmp", port = 1,   cidr = "0.0.0.0/0" },
+      { protocol = "tcp", port = 22, cidr = "10.0.0.0/8" },
+      { protocol = "tcp", port = 443, cidr = "0.0.0.0/0" },
+      { protocol = "udp", port = 53, cidr = "192.168.1.0/24" },
+      { protocol = "icmp", port = 1, cidr = "0.0.0.0/0" },
     ]
   }
 }

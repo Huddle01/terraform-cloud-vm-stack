@@ -61,8 +61,8 @@ run "ingress_rule_count_matches_input" {
   command = plan
   variables {
     ingress_rules = [
-      { protocol = "tcp", port = 22,  cidr = "10.0.0.0/8" },
-      { protocol = "tcp", port = 80,  cidr = "0.0.0.0/0" },
+      { protocol = "tcp", port = 22, cidr = "10.0.0.0/8" },
+      { protocol = "tcp", port = 80, cidr = "0.0.0.0/0" },
       { protocol = "tcp", port = 443, cidr = "0.0.0.0/0" },
     ]
   }
@@ -221,7 +221,7 @@ run "ingress_and_egress_rules_coexist" {
     ]
     egress_rules = [
       { protocol = "tcp", port = 443, cidr = "0.0.0.0/0" },
-      { protocol = "udp", port = 53,  cidr = "0.0.0.0/0" },
+      { protocol = "udp", port = 53, cidr = "0.0.0.0/0" },
     ]
   }
 
