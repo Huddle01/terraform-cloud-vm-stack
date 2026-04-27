@@ -2,7 +2,7 @@ terraform {
   required_providers {
     huddle = {
       source  = "huddle01/cloud"
-      version = "~> 0.3"
+      version = ">= 0.3.2"
     }
   }
 }

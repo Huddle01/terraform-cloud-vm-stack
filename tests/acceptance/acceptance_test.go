@@ -65,7 +65,9 @@ func envOrSkip(t *testing.T, names ...string) map[string]string {
 func requiredVars(t *testing.T) (apiKey, region, flavorName, imageName string) {
 	t.Helper()
 	env := envOrSkip(t, "HUDDLE_API_KEY", "HUDDLE_REGION", "HUDDLE_FLAVOR_NAME", "HUDDLE_IMAGE_NAME")
-	return env["HUDDLE_API_KEY"], env["HUDDLE_REGION"], env["HUDDLE_FLAVOR_NAME"], env["HUDDLE_IMAGE_NAME"]
+	return env["HUDDLE_API_KEY"], env["HUDDLE_REGION"],
+		strings.ToLower(env["HUDDLE_FLAVOR_NAME"]),
+		strings.ToLower(env["HUDDLE_IMAGE_NAME"])
 }
 
 // applyBaseURL injects the base_url Terraform variable when HUDDLE_LOCAL_BASE_URL

@@ -68,6 +68,12 @@ test-acceptance-local:
 	  TF_SKIP_INIT=1 \
 	  go test -v -count=1 -timeout 30m ./...
 
+TEST ?= TestFullStack
+test-acceptance-one:
+	cd tests/acceptance && \
+	TF_SKIP_INIT=1 \
+	go test ./ -run $(TEST) -v -count=1 -timeout 10m
+
 # ── Run both ──────────────────────────────────────────────────────────────────
 
 test: test-unit test-acceptance
